@@ -300,22 +300,45 @@ pub fn node_to_string(node: Node, indent: Int) -> String {
         Some(name) -> " " <> name
         None -> ""
       }
-      <> "("
-      <> string.join(
-        list.map(parameters, fn(param) {
-          case param.alias {
-            Some(alias) -> alias <> " "
-            _ -> ""
-          }
-          <> param.name
-          <> case param.type_ {
-            Some(type_) -> ": " <> node_to_string(type_, indent + 1)
-            None -> ""
-          }
-        }),
-        ", ",
-      )
-      <> ")"
+      <> {
+        let parameters_str =
+          parameters
+          |> list.reverse
+          |> list.map(fn(param) {
+            case param.alias {
+              Some(alias) -> alias <> " "
+              _ -> ""
+            }
+            <> param.name
+            <> case param.type_ {
+              Some(type_) -> ": " <> node_to_string(type_, indent + 1)
+              None -> ""
+            }
+          })
+
+        let new_line =
+          parameters_str
+          |> list.any(fn(str) { string.contains(str, "\n") })
+        let length =
+          parameters_str
+          |> list.map(string.length)
+          |> int.sum()
+
+        case length > 60 || new_line {
+          True ->
+            "("
+            <> string.join(
+              list.map(parameters_str, fn(param) {
+                "\n" <> indent_str(indent + 1) <> param <> ","
+              }),
+              "",
+            )
+            <> "\n"
+            <> indent_str(indent)
+            <> ")"
+          False -> "(" <> string.join(parameters_str, ", ") <> ")"
+        }
+      }
       <> case return_type {
         Some(return_type) -> " -> " <> node_to_string(return_type, indent + 1)
         None -> ""

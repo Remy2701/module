@@ -236,6 +236,39 @@ pub fn type_definition_node_to_string_test() {
 }
 
 //-----------------------------------------------------------------------------------------------//
+//                                      Function Definition                                      //
+//-----------------------------------------------------------------------------------------------//
+
+pub fn function_definition_node_to_string_test() {
+  module.function_definition.create()
+  |> module.function_definition.with_name("my_function")
+  |> module.function_definition.add_parameter(
+    "argument0",
+    module.identifier.create("Int"),
+  )
+  |> module.function_definition.add_parameter(
+    "argument1",
+    module.identifier.create("Int"),
+  )
+  |> module.function_definition.add_parameter(
+    "argument2",
+    module.identifier.create("Int"),
+  )
+  |> module.function_definition.add_parameter(
+    "argument3",
+    module.identifier.create("Int"),
+  )
+  |> module.function_definition.add_parameter(
+    "argument4",
+    module.identifier.create("Int"),
+  )
+  |> module.to_string
+  |> should.equal(
+    "fn my_function(\n  argument0: Int,\n  argument1: Int,\n  argument2: Int,\n  argument3: Int,\n  argument4: Int,\n) {\n}",
+  )
+}
+
+//-----------------------------------------------------------------------------------------------//
 //                                            Imports                                            //
 //-----------------------------------------------------------------------------------------------//
 
